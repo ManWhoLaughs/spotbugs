@@ -19,7 +19,7 @@
 
 package edu.umd.cs.findbugs.ba;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -38,16 +38,16 @@ import edu.umd.cs.findbugs.ba.deref.UnconditionalValueDerefSet;
  * @author David Hovemeyer
  */
 public abstract class BasicAbstractDataflowAnalysis<Fact> implements DataflowAnalysis<Fact> {
-    private final IdentityHashMap<BasicBlock, Fact> startFactMap;
+    private final Map<Integer, Fact> startFactMap;
 
-    private final IdentityHashMap<BasicBlock, Fact> resultFactMap;
+    private final Map<Integer, Fact> resultFactMap;
 
     /**
      * Constructor.
      */
     public BasicAbstractDataflowAnalysis() {
-        this.startFactMap = new IdentityHashMap<>();
-        this.resultFactMap = new IdentityHashMap<>();
+        this.startFactMap = new HashMap<>();
+        this.resultFactMap = new HashMap<>();
     }
 
     /**
@@ -179,11 +179,12 @@ public abstract class BasicAbstractDataflowAnalysis<Fact> implements DataflowAna
         // Subclasses may override.
     }
 
-    private Fact lookupOrCreateFact(Map<BasicBlock, Fact> map, BasicBlock block) {
-        Fact fact = map.get(block);
+    private Fact lookupOrCreateFact(Map<Integer, Fact> map, BasicBlock block) {
+        final Integer blockLabel = block.getLabel();
+        Fact fact = map.get(blockLabel);
         if (fact == null) {
             fact = createFact();
-            map.put(block, fact);
+            map.put(blockLabel, fact);
         }
         return fact;
     }
